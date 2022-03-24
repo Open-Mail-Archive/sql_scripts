@@ -1,0 +1,58 @@
+create table if not exists pom_profiles (
+    id uuid primary key references auth.users not null,
+    username text unique not null,
+    avatar text,
+    updated_at timestamp with time zone default timezone('utc'::text, now()),
+    created_at timestamp with time zone default timezone('utc'::text, now()),
+
+    constraint username_length check (char_length(username) >= 3)
+);
+
+create table if not exists pom_imap (
+    id uuid primary key not null,
+    user_id uuid references public.pom_profiles not null,
+    username text unique not null,
+    token text not null,
+    server text not null,
+    port int not null default 993,
+    secure boolean default true
+);
+
+create table if not exists pom_mailboxes(
+    id text not null primary key,
+    name text not null,
+    imap_account_id uuid references public.pom_imap not null,
+    path text not null,
+    flags text,
+    delimiter text not null,
+    listed boolean default true not null,
+    parent text,
+    specialUse text,
+    subscribed boolean default true not null
+);
+
+create table if not exists pom_emails(
+    id int primary key not null,
+    mailbox_id text references public.pom_mailboxes not null,
+    flags text,
+    date timestamp with time zone NOT NULL,
+    subject text not null,
+    from_ text not null,
+    to_ text not null,
+    reply_to text,
+    sender text not null,
+    path text not null
+);
+
+create table if not exists pom_tags (
+    id uuid primary key not null,
+    name text not null unique,
+    color text,
+    icon text
+);
+
+create table if not exists pom_emails_tags(
+    primary key(tag_id, email_id),
+    tag_id uuid references public.pom_tags not null,
+    email_id int references public.pom_emails not null
+);
