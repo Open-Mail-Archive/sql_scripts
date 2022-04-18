@@ -1,5 +1,5 @@
 create table if not exists pom_profiles (
-    id uuid primary key references auth.users not null,
+    id uuid primary key references auth.users on delete cascade not null,
     username text unique not null,
     avatar text,
     updated_at timestamp with time zone default timezone('utc'::text, now()),
@@ -9,8 +9,8 @@ create table if not exists pom_profiles (
 );
 
 create table if not exists pom_imap (
-    id uuid primary key not null,
-    user_id uuid references public.pom_profiles not null,
+    id serial primary key,
+    user_id uuid references public.pom_profiles on delete cascade not null,
     username text unique not null,
     token text not null,
     server text not null,
@@ -21,7 +21,7 @@ create table if not exists pom_imap (
 create table if not exists pom_mailboxes(
     id text not null primary key,
     name text not null,
-    imap_account_id uuid references public.pom_imap not null,
+    imap_account_id integer references public.pom_imap on delete cascade not null,
     path text not null,
     flags text,
     delimiter text not null,
@@ -31,9 +31,9 @@ create table if not exists pom_mailboxes(
     subscribed boolean default true not null
 );
 
-create table if not exists pom_emails(
-    id int primary key not null,
-    mailbox_id text references public.pom_mailboxes not null,
+create table pom_emails(
+    id bigint primary key not null,
+    mailbox_id text references public.pom_mailboxes on delete cascade not null,
     flags text,
     date timestamp with time zone NOT NULL,
     subject text not null,
@@ -45,14 +45,14 @@ create table if not exists pom_emails(
 );
 
 create table if not exists pom_tags (
-    id uuid primary key not null,
+    id serial primary key not null,
     name text not null unique,
     color text,
     icon text
 );
 
-create table if not exists pom_emails_tags(
+create table pom_emails_tags(
     primary key(tag_id, email_id),
-    tag_id uuid references public.pom_tags not null,
-    email_id int references public.pom_emails not null
+    tag_id integer references public.pom_tags on delete cascade not null,
+    email_id bigint references public.pom_emails on delete cascade not null
 );

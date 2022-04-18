@@ -1,0 +1,6 @@
+drop table pom_emails_tags;
+drop table pom_tags;
+drop table pom_emails;
+drop table pom_mailboxes;
+drop table pom_imap;
+drop table pom_profiles;
