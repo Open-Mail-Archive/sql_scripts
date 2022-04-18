@@ -2,10 +2,14 @@
 
 ## v2.0.0
 
-Changes:
+**💣 Breaking changes**:
+
+- Changed id fields data types.
+
+
+**🌟 New features**:
 
 - Added `on delete cascade` to foreign keys
-- Changed id fields data types.
 - Added Wipeout script.
 
 ##  v1.0.0
