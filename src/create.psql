@@ -7,6 +7,7 @@ create table if not exists pom_profiles (
 
     constraint username_length check (char_length(username) >= 3)
 );
+alter table pom_profiles replica identity full;
 
 create table if not exists pom_imap (
     id serial primary key,
@@ -17,8 +18,9 @@ create table if not exists pom_imap (
     port int not null default 993,
     secure boolean default true
 );
+alter table pom_imap replica identity full;
 
-create table if not exists pom_mailboxes(
+create table if not exists pom_mailboxes (
     id text not null primary key,
     name text not null,
     imap_account_id integer references public.pom_imap on delete cascade not null,
@@ -30,8 +32,9 @@ create table if not exists pom_mailboxes(
     specialUse text,
     subscribed boolean default true not null
 );
+alter table pom_mailboxes replica identity full;
 
-create table pom_emails(
+create table pom_emails (
     id bigint primary key not null,
     mailbox_id text references public.pom_mailboxes on delete cascade not null,
     flags text,
@@ -43,6 +46,7 @@ create table pom_emails(
     sender text not null,
     path text not null
 );
+alter table pom_emails replica identity full;
 
 create table if not exists pom_tags (
     id serial primary key not null,
@@ -50,9 +54,11 @@ create table if not exists pom_tags (
     color text,
     icon text
 );
+alter table pom_profiles replica identity full;
 
-create table pom_emails_tags(
+create table pom_emails_tags (
     primary key(tag_id, email_id),
     tag_id integer references public.pom_tags on delete cascade not null,
     email_id bigint references public.pom_emails on delete cascade not null
 );
+alter table pom_emails_tags replica identity full;
